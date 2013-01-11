@@ -24,7 +24,6 @@ class Custom
     data << { "name" => "name", "value" => self.name, "prompt" => "Name" }
     data << { "name" => "description", "value" => self.description, "prompt" => "Description" }
     data << { "name" => "object_template", "value" => self.object_template, "prompt" => "Template" }
-    data << { "name" => "objects", "value" => self.objects, "prompt" => "Objects" }
   end
 
 
@@ -33,8 +32,36 @@ class Custom
     data << { "name" => "name", "value" => self.name ? self.name : "", "prompt" => "Name", "type" => "string" }
     data << { "name" => "description", "value" => self.description ? self.description : "", "prompt" => "Description", "type" => "string" }
     data << { "name" => "object_template", "value" => self.object_template ? self.object_template : nil, "prompt" => "Template", "type" => "array" }
-    data << { "name" => "objects", "value" => self.objects ? self.objects : nil, "prompt" => "Objects", "type" => "array" }
   end
+
+
+  def links(current_href)
+    data = []
+    data << { "name" => "objects", "href" => current_href + "/documents" }
+  end
+
+
+  def custom_object_data
+
+  end
+
+
+  def custom_object_template
+    # Build the template based on the object_template value
+
+    data = []
+
+    if self.object_template
+      for object_field in self.object_template
+        object_field_parts = object_field.split(":")
+        data << { "name" => object_field_parts[0], "value" => "", "prompt" => object_field_parts[0], "type" => object_field_parts[1] }
+      end
+    end
+
+    data
+
+  end
+
 
 
   def generate_slug

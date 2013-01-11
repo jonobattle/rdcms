@@ -43,16 +43,59 @@ class CustomsController < ApplicationController
 
 
   def show
-
     @page_object = "custom"
     custom = Custom.find_by(slug: params[:custom_slug])
     @page_object = custom.object 
 
     @data = custom.data
+    @links = custom.links(@current_domain)
     @template_data = custom.template
 
     render_default_item
   end
+
+
+  def documents_index
+
+    @page_object = "customs"
+
+    @items = []
+    custom = Custom.find_by(slug: params[:custom_slug])
+
+    @links = []
+    @links << { "rel" => "settings", "page_object" => "pages_settings", "href" => @current_domain + "/settings", "prompt" => custom.name + " Settings" }
+
+    if custom and custom.objects and !custom.objects.empty?
+      for object in custom.objects
+        @items << { "href" => object.href(@root_domain), "page_object" => object.object, "data" => object.data }
+      end
+    end
+
+    @template_data = custom.custom_object_template
+
+    render_default_collection
+
+  end
+
+
+  def documents_create
+
+    custom = Custom.find_by(slug: params[:custom_slug])
+    
+    if custom and custom.object_template and !custom.object_template.empty?
+      document = DynamicCustom.new(params)
+      document.save!
+    end
+
+    render_default_item
+
+  end
+
+
+
+
+
+
 
 
 end
