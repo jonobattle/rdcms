@@ -12,7 +12,14 @@ class Page
 
 
   def href(root_domain)
-    root_domain + "/pages/" + self.slug
+    # Check if the current page is the homepage, if so get rid of the slug in the url
+    site = Site.first
+    if site.homepage_slug == self.slug
+      root_domain
+    else
+      root_domain + "/" + self.slug
+    end
+
   end
 
 
@@ -77,14 +84,11 @@ class Page
   end
 
 
-
-  # Parent serviceline of current serviceline if set
   def parent
     Page.find_by(slug: self.parent_page_slug) if self.parent_page_slug.present?
   end
 
 
-  # Find the servicelines that would qualify to be parents of the current serviceline
   def available_parents
 
     available_pages = Page.where(:slug.ne => self.slug) if self.slug.present?
@@ -106,7 +110,6 @@ class Page
   end
 
 
-  # Check if the provided serviceline qualifies as a valid parent without causing and infinite loop
   def valid_heirachy(original)
     if self.parent.present? && self.parent.slug != original.slug
       self.parent.valid_heirachy(original)
