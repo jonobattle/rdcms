@@ -39,9 +39,39 @@ class SiteController < ApplicationController
 
     end
 
+    if has_access
+      @template_data = site.template
+    end
+
     render_default_item
 
   end
+
+
+  def update
+
+    site = Site.first
+    @page_object = site.object
+    @flash = []
+
+    site.name = params[:name] if params[:name]
+    site.description = params[:description] if params[:description]
+    
+    homepage = Page.find_by(slug: params[:homepage_slug]) if params[:homepage_slug]
+    if homepage
+      site.homepage_slug = homepage.slug
+    end
+
+    if site.save
+      @flash << { "type" => "success", "caption" => "Site Updated successfully", "message" => "The site details have been updated"}      
+    end
+
+    render_default_item
+
+  end
+
+
+
 
 
 end

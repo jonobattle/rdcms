@@ -37,14 +37,12 @@ private
 
 
   def has_access
-
     session = Session.where(auth_token: request.authorization).first
     if session
       true
     else
       false
     end
-
   end
 
 

@@ -30,10 +30,10 @@ class PagesController < ApplicationController
 
 
   def create
+    @page_object = "page"
+    @flash = []
 
     if has_access
-      @page_object = "page"
-      @flash = []
       page = Page.new(name: params[:name], description: params[:description], body: params[:body], parent_page_slug: params[:parent_page_slug])
       if page.save
         @flash << { "type" => "success", "caption" => "Page Created Sucessfully", "message" => "New page '" + page.name + "' created successfully"}
@@ -41,21 +41,34 @@ class PagesController < ApplicationController
         @flash << { "type" => "error", "caption" => "Page Not Created", "message" => "There was an issue creating the new page" }
       end
 
-      render_default_item
+    else
+      @flash << { "type" => "error", "caption" => "Not Logged In", "message" => "You need to be logged in to create new pages" }
     end
+
+    render_default_item
 
   end
 
 
   def show
 
-    @page = Page.find_by(slug: params[:page_slug])
-    @page_object = @page.object
+    @flash = []
 
-    @data = @page.data
+    page = Page.find_by(slug: params[:page_slug])
+    @page_object = page.object
+    
+    if has_access or (page.is_live == true)
+      @data = page.data
+    else
+
+      # Either the page isn't found or the page isn't live and the user isn't logged in
+      page_not_found = Page.new(name: "Page Not Found", body: "The page cannot be found")
+      @data = page_not_found.data
+
+    end
 
     if has_access
-      @template_data = @page.template
+      @template_data = page.template
     end
 
     render_default_item

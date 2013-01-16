@@ -12,7 +12,14 @@ class NavigationsController < ApplicationController
     @links << { "rel" => "settings", "page_object" => "navigations_settings", "href" => @current_domain + "/settings", "prompt" => "Navigations Settings" }
 
     @items = []
-    navigations = Navigation.all
+
+    if has_access
+      navigations = Navigation.all
+    else
+      navigations = Navigation.where(is_live: true)
+    end
+
+    navigations = navigations.sort_by{|e| e[:rank]}
 
     if !navigations.empty?
       for navigation in navigations 
@@ -33,11 +40,16 @@ class NavigationsController < ApplicationController
 
     @navigation_object = "navigation"
     @flash = []
-    navigation = Navigation.new(name: params[:name], description: params[:description], parent_navigation_slug: params[:parent_navigation_slug], page_slug: params[:page_slug], rank: params[:rank], friendly_url: params[:friendly_url])
-    if navigation.save
-      @flash << { "type" => "success", "caption" => "Navigation Created Sucessfully", "message" => "New navigation '" + navigation.name + "' created successfully"}
+
+    if has_access
+      navigation = Navigation.new(name: params[:name], description: params[:description], parent_navigation_slug: params[:parent_navigation_slug], page_slug: params[:page_slug], rank: params[:rank], friendly_url: params[:friendly_url])
+      if navigation.save
+        @flash << { "type" => "success", "caption" => "Navigation Created Sucessfully", "message" => "New navigation '" + navigation.name + "' created successfully"}
+      else
+        @flash << { "type" => "error", "caption" => "Navigation Not Created", "message" => "There was an issue creating the new navigation" }
+      end
     else
-      @flash << { "type" => "error", "caption" => "Navigation Not Created", "message" => "There was an issue creating the new navigation" }
+      @flash << { "type" => "error", "caption" => "Navigation Not Created", "message" => "You need to be logged in to create new navigations" }
     end
 
     render_default_item
@@ -46,7 +58,6 @@ class NavigationsController < ApplicationController
 
 
   def show
-
     @navigation = Navigation.find_by(slug: params[:navigation_slug])
     @navigation_object = @navigation.object
 
@@ -54,12 +65,10 @@ class NavigationsController < ApplicationController
     @template_data = @navigation.template
 
     render_default_item
-
   end
 
 
   def update
-
     @navigation = Navigation.find_by(slug: params[:navigation_slug])
     @navigation_object = @navigation.object
 
@@ -77,7 +86,6 @@ class NavigationsController < ApplicationController
     @template_data = @navigation.template
 
     render_default_item
-
   end
 
 

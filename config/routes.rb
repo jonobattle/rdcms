@@ -1,7 +1,12 @@
 TasApi::Application.routes.draw do
 
-  get     '/',                                        to: 'site#index',       format: 'json'
+
+  # Catch all wildcard for OPTIONS actions
   
+
+  get     '/___root',                                 to: 'site#index',       format: 'json'
+  get     '/',                                        to: 'site#index',       format: 'json'
+  put     '/',                                        to: 'site#update',      format: 'json'
   
 
 
@@ -50,7 +55,8 @@ TasApi::Application.routes.draw do
   # Catch all wildcard
   get   '/:page_slug',                            to: 'pages#show', format: 'json'
 
-  # Catch all wildcard for OPTIONS actions
+
   match "/*options", controller: "application", action: "options", constraints: { method: "OPTIONS" }
+
 
 end

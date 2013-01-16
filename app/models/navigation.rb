@@ -8,6 +8,7 @@ class Navigation
   field :slug, type: String
   field :parent_navigation_slug, type: String
   field :friendly_url, type: String
+  field :is_live, type: Boolean
 
   before_create :generate_slug
 
@@ -24,10 +25,11 @@ class Navigation
 
   def data(root_domain)
     data = []
-    data << { "name" => "name", "value" => self.name, "prompt" => "Name" }
-    data << { "name" => "description", "value" => self.description, "prompt" => "Description" }
-    data << { "name" => "rank", "value" => self.rank, "prompt" => "Rank" }
-    data << { "name" => "friendly_url", "value" => self.friendly_url, "prompt" => "Friendly URL" }
+    data << { "name" => "name", "value" => self.name, "prompt" => "Name", "type" => "string" }
+    data << { "name" => "description", "value" => self.description, "prompt" => "Description", "type" => "text" }
+    data << { "name" => "rank", "value" => self.rank, "prompt" => "Rank", "type" => "integer" }
+    data << { "name" => "friendly_url", "value" => self.friendly_url, "prompt" => "Friendly URL", "type" => "string" }
+    data << { "name" => "is_live", "value" => self.is_live, "prompt" => "Is Live?", "type" => "boolean" }
 
     # find the parent page if there is one
     if self.parent_navigation_slug
@@ -76,12 +78,13 @@ class Navigation
     end
 
     data = []
-    data << { "name" => "name", "value" => self.name ? self.name : "", "prompt" => "Name", "type" => "text" }
-    data << { "name" => "description", "value" => self.description ? self.description : "", "prompt" => "Description", "type" => "textarea" }
+    data << { "name" => "name", "value" => self.name ? self.name : "", "prompt" => "Name", "type" => "string" }
+    data << { "name" => "description", "value" => self.description ? self.description : "", "prompt" => "Description", "type" => "text" }
     data << { "name" => "rank", "value" => self.rank ? self.rank : "", "prompt" => "Rank", "type" => "integer" }
     data << { "name" => "parent_navigation_slug", "value" => self.parent_navigation_slug ? self.parent_navigation_slug : "", "prompt" => "parent_navigation_slug", "type" => "option", "options" => parent_navigation_options, "values" => parent_navigation_values }
     data << { "name" => "page_slug", "value" => self.page_slug ? self.page_slug : "", "prompt" => "page_slug", "type" => "option", "options" => page_options, "values" => page_values }
-    data << { "name" => "friendly_url", "value" => self.friendly_url ? self.friendly_url : "", "prompt" => "friendly_url", "type" => "text" }
+    data << { "name" => "friendly_url", "value" => self.friendly_url ? self.friendly_url : "", "prompt" => "friendly_url", "type" => "string" }
+    data << { "name" => "is_live", "value" => self.is_live ? self.is_live : false, "prompt" => "Is Live?", "type" => "boolean" }
 
   end
 

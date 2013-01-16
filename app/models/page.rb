@@ -6,6 +6,7 @@ class Page
   field :parent_page_slug, type: String
   field :body, type: String
   field :slug, type: String
+  field :is_live, type: Boolean
 
 
   before_create :generate_slug
@@ -25,9 +26,10 @@ class Page
   def data 
 
     data = []
-    data << { "name" => "name", "value" => self.name, "prompt" => "Name" }
-    data << { "name" => "description", "value" => self.description, "prompt" => "Description" }
-    data << { "name" => "body", "value" => self.body, "prompt" => "Body" }
+    data << { "name" => "name", "value" => self.name, "prompt" => "Name", "type" => "string" }
+    data << { "name" => "description", "value" => self.description, "prompt" => "Description", "type" => "text" }
+    data << { "name" => "body", "value" => self.body, "prompt" => "Body", "type" => "text" }
+    data << { "name" => "is_live", "value" => self.is_live, "prompt" => "Is Live?", "type" => "boolean" }
 
     # find the parent page if there is one
     if self.parent_page_slug
@@ -50,17 +52,16 @@ class Page
     available_parents = self.available_parents
     if available_parents
       for page in available_parents
-
-        puts "PAGE!" + page.inspect
         parent_page_options << page.name
         parent_page_values << page.slug
       end
     end
 
     data = []
-    data << { "name" => "name", "value" => self.name ? self.name : "", "prompt" => "Name", "type" => "text" }
-    data << { "name" => "description", "value" => self.description ? self.description : "", "prompt" => "Description", "type" => "textarea" }
-    data << { "name" => "body", "value" => self.body ? self.body : "", "prompt" => "Body", "type" => "textarea" }
+    data << { "name" => "name", "value" => self.name ? self.name : "", "prompt" => "Name", "type" => "string" }
+    data << { "name" => "description", "value" => self.description ? self.description : "", "prompt" => "Description", "type" => "text" }
+    data << { "name" => "body", "value" => self.body ? self.body : "", "prompt" => "Body", "type" => "text" }
+    data << { "name" => "is_live", "value" => self.is_live ? self.is_live : false, "prompt" => "Is Live?", "type" => "boolean" }
     data << { "name" => "parent_page_slug", "value" => self.parent_page_slug ? self.parent_page_slug : "", "prompt" => "parent_page_slug", "type" => "option", "options" => parent_page_options, "values" => parent_page_values }
   end
 

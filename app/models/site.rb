@@ -38,7 +38,7 @@ class Site
     data = []
     data << { "name" => "name", "value" => self.name, "prompt" => "Title" }
     data << { "name" => "description", "value" => self.description, "prompt" => "Description" }
-    data << { "name" => "homepage", "value" => homepage, "prompt" => "Hompage", "type" => "option", "options" => homepage_options, "values" => homepage_values }
+    data << { "name" => "homepage_slug", "value" => self.homepage_slug, "prompt" => "Hompage", "type" => "option", "options" => homepage_options, "values" => homepage_values }
   end    
 
 
