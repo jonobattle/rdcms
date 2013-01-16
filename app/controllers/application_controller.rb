@@ -1,7 +1,10 @@
 class ApplicationController < ActionController::Base
 
-  before_filter :cors_preflight_check, :build_globals
+  before_filter :build_globals
+  before_filter :cors_preflight_check
   after_filter :cors_set_access_control_headers
+
+  include ActionController::HttpAuthentication::Token
 
   # For all responses in this controller, return the CORS access control headers.
   def options
@@ -10,7 +13,7 @@ class ApplicationController < ActionController::Base
   def cors_set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
     headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-    headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, X-CSRF-Token'
+    headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, X-CSRF-Token, Authorization'
     headers['Access-Control-Max-Age'] = "1728000"
   end
 
@@ -22,24 +25,43 @@ class ApplicationController < ActionController::Base
     if request.method == "OPTIONS"
       headers['Access-Control-Allow-Origin'] = '*'
       headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-      headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, X-CSRF-Token'
+      headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-Prototype-Version, X-CSRF-Token, Authorization'
       headers['Access-Control-Max-Age'] = '1728000'
       render :text => '', :content_type => 'text/plain'
     end
   end
 
   protect_from_forgery  
-
-
+  
 private
 
-  def root_domain
-    
+
+  def has_access
+
+    session = Session.where(auth_token: request.authorization).first
+    if session
+      true
+    else
+      false
+    end
+
   end
 
 
-  def current_domain
-    
+  def current_account
+    if request.authorization
+      session = current_session
+      if session
+        Account.find_by(slug: session.account_slug)
+      end
+    end
+  end
+
+
+  def current_session
+    if request.authorization
+      Session.where(auth_token: request.authorization).first
+    end
   end
 
 

@@ -13,13 +13,7 @@ class Page
 
   def href(root_domain)
     # Check if the current page is the homepage, if so get rid of the slug in the url
-    site = Site.first
-    if site.homepage_slug == self.slug
-      root_domain
-    else
-      root_domain + "/" + self.slug
-    end
-
+    root_domain + "/pages/" + self.slug
   end
 
 

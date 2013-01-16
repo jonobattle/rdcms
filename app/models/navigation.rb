@@ -7,6 +7,7 @@ class Navigation
   field :rank, type: Integer
   field :slug, type: String
   field :parent_navigation_slug, type: String
+  field :friendly_url, type: String
 
   before_create :generate_slug
 
@@ -26,6 +27,7 @@ class Navigation
     data << { "name" => "name", "value" => self.name, "prompt" => "Name" }
     data << { "name" => "description", "value" => self.description, "prompt" => "Description" }
     data << { "name" => "rank", "value" => self.rank, "prompt" => "Rank" }
+    data << { "name" => "friendly_url", "value" => self.friendly_url, "prompt" => "Friendly URL" }
 
     # find the parent page if there is one
     if self.parent_navigation_slug
@@ -39,7 +41,7 @@ class Navigation
     if self.page_slug
       page = Page.find_by(slug: self.page_slug)
       if page
-        data << { "name" => "page", "value" => page.href(root_domain), "prompt" => "Page", "type" => "object" }
+        data << { "name" => "url", "value" => page.href(root_domain), "prompt" => "Url", "type" => "href" }
       end
     end
 
@@ -79,6 +81,8 @@ class Navigation
     data << { "name" => "rank", "value" => self.rank ? self.rank : "", "prompt" => "Rank", "type" => "integer" }
     data << { "name" => "parent_navigation_slug", "value" => self.parent_navigation_slug ? self.parent_navigation_slug : "", "prompt" => "parent_navigation_slug", "type" => "option", "options" => parent_navigation_options, "values" => parent_navigation_values }
     data << { "name" => "page_slug", "value" => self.page_slug ? self.page_slug : "", "prompt" => "page_slug", "type" => "option", "options" => page_options, "values" => page_values }
+    data << { "name" => "friendly_url", "value" => self.friendly_url ? self.friendly_url : "", "prompt" => "friendly_url", "type" => "text" }
+
   end
 
 

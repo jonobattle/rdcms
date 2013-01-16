@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  account_slug: MyString
+  device_slug: MyString
+  ip_address: MyString
+  auth_token: MyString
+
+two:
+  account_slug: MyString
+  device_slug: MyString
+  ip_address: MyString
+  auth_token: MyString

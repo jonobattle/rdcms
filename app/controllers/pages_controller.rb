@@ -2,8 +2,6 @@ class PagesController < ApplicationController
 
   respond_to :json
 
-
-
   def index
 
     @page_object = "pages"
@@ -21,8 +19,10 @@ class PagesController < ApplicationController
     end
 
     # Template for creating to pages
-    blank_page = Page.new
-    @template_data = blank_page.template 
+    if has_access
+      blank_page = Page.new
+      @template_data = blank_page.template 
+    end
 
     render_default_collection
 
@@ -31,16 +31,18 @@ class PagesController < ApplicationController
 
   def create
 
-    @page_object = "page"
-    @flash = []
-    page = Page.new(name: params[:name], description: params[:description], body: params[:body], parent_page_slug: params[:parent_page_slug])
-    if page.save
-      @flash << { "type" => "success", "caption" => "Page Created Sucessfully", "message" => "New page '" + page.name + "' created successfully"}
-    else
-      @flash << { "type" => "error", "caption" => "Page Not Created", "message" => "There was an issue creating the new page" }
-    end
+    if has_access
+      @page_object = "page"
+      @flash = []
+      page = Page.new(name: params[:name], description: params[:description], body: params[:body], parent_page_slug: params[:parent_page_slug])
+      if page.save
+        @flash << { "type" => "success", "caption" => "Page Created Sucessfully", "message" => "New page '" + page.name + "' created successfully"}
+      else
+        @flash << { "type" => "error", "caption" => "Page Not Created", "message" => "There was an issue creating the new page" }
+      end
 
-    render_default_item
+      render_default_item
+    end
 
   end
 
@@ -51,7 +53,10 @@ class PagesController < ApplicationController
     @page_object = @page.object
 
     @data = @page.data
-    @template_data = @page.template
+
+    if has_access
+      @template_data = @page.template
+    end
 
     render_default_item
 

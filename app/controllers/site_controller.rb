@@ -8,7 +8,9 @@ class SiteController < ApplicationController
     site = Site.first
 
     @links = []
+
     @links << { "rel" => "navigation", "page_object" => "navigation", "href" => @current_domain + "navigations", "prompt" => "Site Navigation" }
+    @links << { "rel" => "session", "page_object" => "session", "href" => @current_domain + "session", "prompt" => "Session" }
 
     # If there is no site we create one with default settings
     if !site

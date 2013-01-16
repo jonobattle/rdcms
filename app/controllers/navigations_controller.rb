@@ -33,7 +33,7 @@ class NavigationsController < ApplicationController
 
     @navigation_object = "navigation"
     @flash = []
-    navigation = Navigation.new(name: params[:name], description: params[:description], parent_navigation_slug: params[:parent_navigation_slug], page_slug: params[:page_slug], rank: params[:rank])
+    navigation = Navigation.new(name: params[:name], description: params[:description], parent_navigation_slug: params[:parent_navigation_slug], page_slug: params[:page_slug], rank: params[:rank], friendly_url: params[:friendly_url])
     if navigation.save
       @flash << { "type" => "success", "caption" => "Navigation Created Sucessfully", "message" => "New navigation '" + navigation.name + "' created successfully"}
     else
@@ -50,7 +50,7 @@ class NavigationsController < ApplicationController
     @navigation = Navigation.find_by(slug: params[:navigation_slug])
     @navigation_object = @navigation.object
 
-    @data = @navigation.data
+    @data = @navigation.data(@root_domain)
     @template_data = @navigation.template
 
     render_default_item
@@ -70,9 +70,10 @@ class NavigationsController < ApplicationController
     @navigation.parent_navigation_slug = params[:parent_navigation_slug] if params[:parent_navigation_slug]
     @navigation.page_slug = params[:page_slug] if params[:page_slug]
     @navigation.rank = params[:rank] if params[:rank]
+    @navigation.friendly_url = params[:friendly_url] if params[:friendly_url]
     @navigation.save!
 
-    @data = @navigation.data 
+    @data = @navigation.data(@root_domain)
     @template_data = @navigation.template
 
     render_default_item
